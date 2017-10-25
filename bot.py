@@ -17,7 +17,7 @@ api = tweepy.API(auth)
 #datetime.datetime.now()
 todays_date = datetime.date.today().strftime("%m") + "-" + datetime.date.today().strftime("%d")
 print "it's " + todays_date
-todays_file = open(todays_date + '.csv', 'r')
+todays_file = open("csv/"+ todays_date + '.csv', 'r')
 todays_list = []
 for entry in todays_file.readlines():
     todays_list.append(entry.rstrip('\n'))
