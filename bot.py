@@ -1,39 +1,52 @@
-import unicodecsv
-from datetime import datetime
-from difflib import SequenceMatcher
+import tweepy
+import datetime
+from time import sleep
+from credentials import *
+import random
 
-# To do:
-# - Limit to X updates per day
-# - Post tweets!
-# - Screenshot
-# - ???
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+api = tweepy.API(auth)
 
-csvNumber = 1
-deduplicate = True
+# my_file=open('verne.txt','r')
+# file_lines=my_file.readlines()
+# my_file.close()
 
-while csvNumber < 5:
-    with open('crest_lite_' + str(csvNumber) + '.csv') as csvfile:
-        print "Opening Crest Lite " + (str(csvNumber))
-        reader = unicodecsv.DictReader(csvfile)
-        for row in reader:
-            if row['publication_date'] != '':
-                datetime_object = datetime.strptime(row['publication_date'], '%B %d, %Y')
-                    csv_file = open(str(datetime_object.strftime('%m')) + '-' + str(datetime_object.strftime('%d')) + '.csv', 'a')
-                csv_file_row_checker = csv_file
-    #            try:
-    #                updates_so_far = len(list(csv_file))
-    #                print str(updates_so_far)
-    #            except:
-    #                updates_so_far = 0
-                csv_writer = unicodecsv.writer(csv_file)
-                if row['title'] != "(UNTITLED)" and row['title'] != "(SANITIZED)" and row['title'] != "(Classified)":
-                    csv_writer.writerow(["OTD in 19" + str(datetime_object.strftime('%y')) + ": " + row['title'][0:100] + " " + row['url'] + " (" + row['document_page_count']+ " pgs)"])
-    #            elif row['more1_title'] != '': # Double check this actually works to check if there's no more title
-    #                csv_writer.writerow([row['more1_title'][0:115] + " " + row['url']])
-                else:
-                    csv_writer.writerow(["OTD in 19" + str(datetime_object.strftime('%y')) + ": " + "A mysterious " + row['content_type'] + " with document number  " + row['document_number'][0:20] + " " + row['url'] + " (" + row['document_page_count']+ " pgs)"])
-            else:
-                print "No date"
+# See http://strftime.org
 
-        print "All done."
-        csvNumber += 1
+#datetime.datetime.now()
+todays_date = datetime.date.today().strftime("%m") + "-" + datetime.date.today().strftime("%d")
+print "it's " + todays_date
+todays_file = open(todays_date + '.csv', 'r')
+todays_list = []
+for entry in todays_file.readlines():
+    todays_list.append(entry.rstrip('\n'))
+
+
+
+#my_file=open('verne.txt','r')
+
+while True:
+    print "check if it's still " + todays_date
+    if todays_date == datetime.date.today().strftime("%m") + "-" + datetime.date.today().strftime("%d"):
+        print "Same day, new demons"
+        try:
+            current_tweet = random.randint(0,len(todays_list))
+            print(todays_list[current_tweet])
+            api.update_status(todays_list[current_tweet])
+            del todays_list[current_tweet]
+        except tweepy.TweepError as e:
+            print(e.reason)
+
+    else:
+        try:
+            todays_date = datetime.date.today().strftime("%m") + "-" + datetime.date.today().strftime("%d")
+            print "it's a new day! it's " + todays_date
+            todays_file = open(todays_date + '.csv', 'r')
+            todays_list = []
+            tweet_counter = 0
+            for entry in todays_file.readlines():
+                todays_list.append(line.rstrip('\n'))
+        except:
+            print "Error on grabbing a new date file"
+    sleep(1800)
