@@ -8,13 +8,6 @@ auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
 
-# my_file=open('verne.txt','r')
-# file_lines=my_file.readlines()
-# my_file.close()
-
-# See http://strftime.org
-
-#datetime.datetime.now()
 todays_date = datetime.date.today().strftime("%m") + "-" + datetime.date.today().strftime("%d")
 print "it's " + todays_date
 todays_file = open("csv/"+ todays_date + '.csv', 'r')
@@ -22,9 +15,6 @@ todays_list = []
 for entry in todays_file.readlines():
     todays_list.append(entry.rstrip('\n'))
 
-
-
-#my_file=open('verne.txt','r')
 
 while True:
     print "check if it's still " + todays_date
